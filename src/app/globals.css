@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+/* Custom variables and utilities */
+@layer base {
+  :root {
+    --background-light: #f6f8f7;
+    --background-dark: #10221c;
+    --text-light: #0d1b17;
+    --text-dark: #e8f3ef;
+    --primary: #11d493;
+    --subtle-light: #cfe7df;
+    --subtle-dark: #2a4a3f;
+  }
+}
+
+@layer utilities {
+  .bg-background-light {
+    background-color: var(--background-light);
+  }
+  .bg-background-dark {
+    background-color: var(--background-dark);
+  }
+  .text-text-light {
+    color: var(--text-light);
+  }
+  .text-text-dark {
+    color: var(--text-dark);
+  }
+  .text-primary {
+    color: var(--primary);
+  }
+  .bg-primary {
+    background-color: var(--primary);
+  }
+  .bg-subtle-light {
+    background-color: var(--subtle-light);
+  }
+  .bg-subtle-dark {
+    background-color: var(--subtle-dark);
+  }
+  .border-subtle-light {
+    border-color: var(--subtle-light);
+  }
+  .border-subtle-dark {
+    border-color: var(--subtle-dark);
+  }
+  .text-subtle-light {
+    color: #4c9a80;
+  }
+  .text-subtle-dark {
+    color: #a3d9c7;
+  }
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+}

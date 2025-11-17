@@ -1,0 +1,6 @@
+.vercel
+.env.local
+.env
+*.zip
+*.tar.gz
+*.tar

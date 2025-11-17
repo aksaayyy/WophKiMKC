@@ -1,75 +1,218 @@
-export default function Privacy() {
-  return (
-    <>
-      <section className="py-16 sm:py-24">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-extrabold tracking-tighter sm:text-5xl md:text-6xl text-center text-text-light dark:text-text-dark">Privacy Policy</h1>
-          <p className="mt-4 max-w-2xl mx-auto text-lg text-subtle-light dark:text-subtle-dark text-center">
-            Your privacy is important to us. This Privacy Policy explains how we collect, use, and protect your information.
-          </p>
-        </div>
-      </section>
+'use client'
 
-      <section className="py-16 sm:py-24 bg-background-light dark:bg-subtle-dark/20">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto space-y-8">
-            <div>
-              <h2 className="text-2xl font-bold mb-4 text-text-light dark:text-text-dark">1. Information We Collect</h2>
-              <p className="text-base text-subtle-light dark:text-subtle-dark">
-                We collect information you provide directly to us, such as when you create an account, update your profile, make a purchase, participate in a survey, or contact us for support. This may include your name, email address, phone number, payment information, and any other information you choose to provide.
-              </p>
+import { motion } from 'framer-motion'
+import { Shield, Lock, Eye, Database, Users, Mail } from 'lucide-react'
+import { Card } from '@/components/ui/Card'
+
+const sections = [
+  {
+    icon: Database,
+    title: 'Information We Collect',
+    content: [
+      'Account information (email, name, profile details)',
+      'Video files and content you upload for processing',
+      'Usage data and analytics to improve our service',
+      'Payment information (processed securely by Stripe)',
+      'Device and browser information for optimization'
+    ]
+  },
+  {
+    icon: Eye,
+    title: 'How We Use Your Information',
+    content: [
+      'Process your videos and provide our core services',
+      'Communicate with you about your account and updates',
+      'Improve our AI algorithms and service quality',
+      'Provide customer support and technical assistance',
+      'Comply with legal obligations and prevent fraud'
+    ]
+  },
+  {
+    icon: Shield,
+    title: 'Data Protection',
+    content: [
+      'All data is encrypted in transit and at rest',
+      'Videos are processed securely and deleted after 30 days',
+      'We use industry-standard security measures',
+      'Regular security audits and penetration testing',
+      'SOC 2 Type II compliance (coming 2025)'
+    ]
+  },
+  {
+    icon: Users,
+    title: 'Data Sharing',
+    content: [
+      'We never sell your personal information to third parties',
+      'Video content is only accessed by our AI processing systems',
+      'Limited sharing with service providers under strict agreements',
+      'Legal compliance when required by law enforcement',
+      'Anonymous analytics data may be used for research'
+    ]
+  }
+]
+
+export default function PrivacyPage() {
+  return (
+    <div className="min-h-screen pt-20 pb-12">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-16"
+        >
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            Privacy{' '}
+            <span className="bg-gradient-primary bg-clip-text text-transparent">
+              Policy
+            </span>
+          </h1>
+          <p className="text-lg text-white/80 max-w-2xl mx-auto mb-4">
+            Your privacy is important to us. This policy explains how we collect, use, and protect your information.
+          </p>
+          <p className="text-sm text-white/60">
+            Last updated: January 27, 2025
+          </p>
+        </motion.div>
+
+        {/* Introduction */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="mb-12"
+        >
+          <Card>
+            <div className="flex items-start space-x-4">
+              <Lock className="w-8 h-8 text-primary-400 mt-1" />
+              <div>
+                <h2 className="text-xl font-semibold text-white mb-3">Our Commitment to Privacy</h2>
+                <p className="text-white/80 leading-relaxed">
+                  At Video Clipper Pro, we believe privacy is a fundamental right. We're committed to being 
+                  transparent about our data practices and giving you control over your information. This 
+                  policy applies to all users of our website, API, and services.
+                </p>
+              </div>
             </div>
-            <div>
-              <h2 className="text-2xl font-bold mb-4 text-text-light dark:text-text-dark">2. How We Use Your Information</h2>
-              <p className="text-base text-subtle-light dark:text-subtle-dark">
-                We use the information we collect to provide, maintain, and improve our services; process transactions; send you technical notices, updates, security alerts, and support messages; respond to your comments and questions; communicate with you about products, services, offers, and events; and monitor and analyze trends, usage, and activities.
-              </p>
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold mb-4 text-text-light dark:text-text-dark">3. Information Sharing and Disclosure</h2>
-              <p className="text-base text-subtle-light dark:text-subtle-dark">
-                We do not sell, trade, or otherwise transfer your personal information to third parties without your consent, except as described in this policy. We may share your information with service providers who assist us in operating our website, conducting our business, or serving our users, as long as those parties agree to keep this information confidential.
-              </p>
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold mb-4 text-text-light dark:text-text-dark">4. Data Security</h2>
-              <p className="text-base text-subtle-light dark:text-subtle-dark">
-                We implement appropriate technical and organizational security measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction. However, no method of transmission over the Internet or electronic storage is 100% secure, so we cannot guarantee absolute security.
-              </p>
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold mb-4 text-text-light dark:text-text-dark">5. Cookies and Tracking Technologies</h2>
-              <p className="text-base text-subtle-light dark:text-subtle-dark">
-                We use cookies and similar tracking technologies to collect and use personal information about you. Cookies are small data files stored on your device that help us improve our services and your experience. You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent.
-              </p>
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold mb-4 text-text-light dark:text-text-dark">6. Your Rights</h2>
-              <p className="text-base text-subtle-light dark:text-subtle-dark">
-                Depending on your location, you may have certain rights regarding your personal information, such as the right to access, correct, delete, or restrict the processing of your data. To exercise these rights, please contact us using the information provided below.
-              </p>
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold mb-4 text-text-light dark:text-text-dark">7. Children&apos;s Privacy</h2>
-              <p className="text-base text-subtle-light dark:text-subtle-dark">
-                Our service is not intended for children under 13, and we do not knowingly collect personal information from children under 13. If we become aware that we have collected personal information from a child under 13, we will take steps to delete such information.
-              </p>
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold mb-4 text-text-light dark:text-text-dark">8. Changes to This Policy</h2>
-              <p className="text-base text-subtle-light dark:text-subtle-dark">
-                We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the &quot;effective date&quot; at the top. You are advised to review this Privacy Policy periodically for any changes.
-              </p>
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold mb-4 text-text-light dark:text-text-dark">9. Contact Us</h2>
-              <p className="text-base text-subtle-light dark:text-subtle-dark">
-                If you have any questions about this Privacy Policy, please contact us at privacy@contentpilot.online.
-              </p>
-            </div>
-          </div>
+          </Card>
+        </motion.div>
+
+        {/* Main Sections */}
+        <div className="space-y-8 mb-12">
+          {sections.map((section, index) => (
+            <motion.div
+              key={section.title}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 + index * 0.1 }}
+            >
+              <Card>
+                <div className="flex items-start space-x-4">
+                  <div className="w-10 h-10 bg-gradient-primary rounded-lg flex items-center justify-center flex-shrink-0">
+                    <section.icon className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h2 className="text-xl font-semibold text-white mb-4">{section.title}</h2>
+                    <ul className="space-y-3">
+                      {section.content.map((item, i) => (
+                        <li key={i} className="flex items-start text-white/80">
+                          <div className="w-2 h-2 bg-primary-400 rounded-full mt-2 mr-3 flex-shrink-0" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </Card>
+            </motion.div>
+          ))}
         </div>
-      </section>
-    </>
-  );
+
+        {/* Your Rights */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+          className="mb-12"
+        >
+          <Card>
+            <h2 className="text-xl font-semibold text-white mb-6">Your Rights and Choices</h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="text-white font-medium mb-3">Access and Control</h3>
+                <ul className="space-y-2 text-white/80 text-sm">
+                  <li>• View and download your personal data</li>
+                  <li>• Update your account information</li>
+                  <li>• Delete your account and data</li>
+                  <li>• Opt out of marketing communications</li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="text-white font-medium mb-3">Data Portability</h3>
+                <ul className="space-y-2 text-white/80 text-sm">
+                  <li>• Export your processed videos</li>
+                  <li>• Download your account data</li>
+                  <li>• Transfer data to other services</li>
+                  <li>• Request data correction</li>
+                </ul>
+              </div>
+            </div>
+          </Card>
+        </motion.div>
+
+        {/* Cookies */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.9 }}
+          className="mb-12"
+        >
+          <Card>
+            <h2 className="text-xl font-semibold text-white mb-4">Cookies and Tracking</h2>
+            <p className="text-white/80 mb-4">
+              We use cookies and similar technologies to improve your experience, analyze usage, and provide personalized content.
+            </p>
+            <div className="grid md:grid-cols-3 gap-4">
+              <div className="bg-white/5 rounded-lg p-4">
+                <h4 className="text-white font-medium mb-2">Essential</h4>
+                <p className="text-white/70 text-sm">Required for basic functionality</p>
+              </div>
+              <div className="bg-white/5 rounded-lg p-4">
+                <h4 className="text-white font-medium mb-2">Analytics</h4>
+                <p className="text-white/70 text-sm">Help us understand usage patterns</p>
+              </div>
+              <div className="bg-white/5 rounded-lg p-4">
+                <h4 className="text-white font-medium mb-2">Marketing</h4>
+                <p className="text-white/70 text-sm">Personalize your experience</p>
+              </div>
+            </div>
+          </Card>
+        </motion.div>
+
+        {/* Contact */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.0 }}
+        >
+          <Card>
+            <div className="flex items-start space-x-4">
+              <Mail className="w-8 h-8 text-primary-400 mt-1" />
+              <div>
+                <h2 className="text-xl font-semibold text-white mb-3">Questions About Privacy?</h2>
+                <p className="text-white/80 mb-4">
+                  If you have any questions about this privacy policy or how we handle your data, 
+                  please don't hesitate to contact us.
+                </p>
+                <div className="space-y-2 text-white/70">
+                  <p>Email: <span className="text-primary-400">aksaayyy6@gmail.com</span></p>
+                  <p>Data Protection Officer: <span className="text-primary-400">privacy@videoclipperpro.com</span></p>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </motion.div>
+      </div>
+    </div>
+  )
 }

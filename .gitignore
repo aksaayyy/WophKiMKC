@@ -63,3 +63,12 @@ logs/
 Thumbs.db
 .DS_Store
 
+downloads/
+video-clipper-pro/
+version2/
+version2_deploy.tar.gz
+venv/
+venv_new/
+test*/
+test_*
+__pycache__/

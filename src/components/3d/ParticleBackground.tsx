@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 
 interface Particle {
@@ -13,10 +13,32 @@ interface Particle {
   color: string
 }
 
+interface FloatingShape {
+  left: string
+  top: string
+  duration: number
+  delay: number
+}
+
 export function ParticleBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const particlesRef = useRef<Particle[]>([])
   const animationRef = useRef<number>()
+  const [shapes, setShapes] = useState<FloatingShape[]>([])
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+    // Generate random positions for shapes on client side only
+    setShapes(
+      [...Array(6)].map(() => ({
+        left: `${Math.random() * 100}%`,
+        top: `${Math.random() * 100}%`,
+        duration: 10 + Math.random() * 10,
+        delay: Math.random() * 5,
+      }))
+    )
+  }, [])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -126,31 +148,33 @@ export function ParticleBackground() {
       />
       
       {/* Floating geometric shapes */}
-      <div className="absolute inset-0 overflow-hidden">
-        {[...Array(6)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-32 h-32 opacity-10"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              y: [0, -30, 0],
-              rotate: [0, 180, 360],
-              scale: [1, 1.1, 1],
-            }}
-            transition={{
-              duration: 10 + Math.random() * 10,
-              repeat: Infinity,
-              ease: 'linear',
-              delay: Math.random() * 5,
-            }}
-          >
-            <div className="w-full h-full bg-gradient-to-br from-primary-500/20 to-purple-500/20 rounded-3xl transform rotate-45" />
-          </motion.div>
-        ))}
-      </div>
+      {mounted && (
+        <div className="absolute inset-0 overflow-hidden">
+          {shapes.map((shape, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-32 h-32 opacity-10"
+              style={{
+                left: shape.left,
+                top: shape.top,
+              }}
+              animate={{
+                y: [0, -30, 0],
+                rotate: [0, 180, 360],
+                scale: [1, 1.1, 1],
+              }}
+              transition={{
+                duration: shape.duration,
+                repeat: Infinity,
+                ease: 'linear',
+                delay: shape.delay,
+              }}
+            >
+              <div className="w-full h-full bg-gradient-to-br from-primary-500/20 to-purple-500/20 rounded-3xl transform rotate-45" />
+            </motion.div>
+          ))}
+        </div>
+      )}
       
       {/* Gradient orbs */}
       <div className="absolute inset-0">

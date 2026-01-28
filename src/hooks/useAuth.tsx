@@ -22,6 +22,7 @@ export interface AuthContextType {
   signUp: (email: string, password: string) => Promise<{ error?: string }>
   signOut: () => Promise<void>
   refreshUser: () => Promise<void>
+  clearSession: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -32,20 +33,53 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // Get initial session with error handling
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (error) {
+        console.warn('Session error, clearing:', error.message)
+        // Clear invalid session
+        supabase.auth.signOut().catch(() => {})
+        setSession(null)
+        setUser(null)
+        setLoading(false)
+        return
+      }
+      
       setSession(session)
       if (session?.user) {
         fetchUserProfile(session.user.id, session.access_token)
       } else {
         setLoading(false)
       }
+    }).catch((error) => {
+      console.warn('Failed to get session:', error)
+      // Clear any corrupted session data
+      supabase.auth.signOut().catch(() => {})
+      setSession(null)
+      setUser(null)
+      setLoading(false)
     })
 
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      // Handle token refresh errors
+      if (event === 'TOKEN_REFRESHED' && !session) {
+        console.warn('Token refresh failed, clearing session')
+        setSession(null)
+        setUser(null)
+        setLoading(false)
+        return
+      }
+      
+      if (event === 'SIGNED_OUT') {
+        setSession(null)
+        setUser(null)
+        setLoading(false)
+        return
+      }
+      
       setSession(session)
       
       if (session?.user) {
@@ -179,6 +213,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  const clearSession = async () => {
+    try {
+      // Clear Supabase session
+      await supabase.auth.signOut()
+      
+      // Clear local storage
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('video-clipper-auth')
+        localStorage.removeItem('sb-imrlhhpsvxtuklxfuwlt-auth-token')
+      }
+      
+      setUser(null)
+      setSession(null)
+      console.log('Session cleared successfully')
+    } catch (error) {
+      console.error('Error clearing session:', error)
+    }
+  }
+
   const value = {
     user,
     session,
@@ -186,7 +239,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     signIn,
     signUp,
     signOut,
-    refreshUser
+    refreshUser,
+    clearSession
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

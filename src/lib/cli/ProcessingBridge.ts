@@ -103,7 +103,8 @@ class ProcessingBridge {
     
     try {
       // Create temporary directory for YouTube download
-      const tempDir = path.join(__dirname, '..', '..', 'temp_youtube', jobId)
+      const projectRoot = process.cwd()
+      const tempDir = path.join(projectRoot, 'temp_youtube', jobId)
       await fs.mkdir(tempDir, { recursive: true })
       
       // Download YouTube video using youtube_cli.py
@@ -138,28 +139,56 @@ class ProcessingBridge {
   private async downloadYouTubeVideo(youtubeUrl: string, outputDir: string, webConfig: WebProcessingConfig): Promise<{ success: boolean; videoPath?: string; error?: string }> {
     return new Promise((resolve, reject) => {
       try {
-        // Get youtube_cli.py path
-        const youtubeCliPath = path.join(__dirname, '..', '..', 'version2', 'youtube_cli.py')
+        // Get project root (go up from .next/server to project root)
+        const projectRoot = process.cwd()
+        const youtubeCliPath = path.join(projectRoot, 'version2', 'youtube_utils.py')
         const pythonPath = process.env.PYTHON_PATH || '/opt/homebrew/bin/python3'
         
-        // Build arguments for youtube_cli.py
-        const args = [
-          youtubeCliPath,
-          '--format', 'json',
-          'download',
-          '--url', youtubeUrl,
-          '--output-dir', outputDir,
-          '--quality', this.mapYouTubeQuality(webConfig.quality)
-        ]
+        // Build arguments for youtube_utils.py download function
+        // Create a Python script that calls the download function and returns JSON
+        const pythonScript = `
+import sys
+import json
+from pathlib import Path
+sys.path.insert(0, '${path.join(projectRoot, 'version2').replace(/\\/g, '\\\\')}')
+
+try:
+    from youtube_utils import download_youtube_video
+    
+    video_path, title_or_error = download_youtube_video(
+        '${youtubeUrl.replace(/'/g, "\\'")}',
+        Path('${outputDir.replace(/\\/g, '\\\\')}'),
+        quality='${this.mapYouTubeQuality(webConfig.quality)}'
+    )
+    
+    if video_path:
+        print(json.dumps({
+            'success': True,
+            'video_path': str(video_path),
+            'title': title_or_error
+        }))
+    else:
+        print(json.dumps({
+            'success': False,
+            'error': title_or_error
+        }))
+except Exception as e:
+    print(json.dumps({
+        'success': False,
+        'error': str(e)
+    }))
+`
+        
+        const args = ['-c', pythonScript]
         
         console.log(`[ProcessingBridge] YouTube download command: ${pythonPath} ${args.join(' ')}`)
         
-        // Execute youtube_cli.py
+        // Execute Python command
         const child = spawn(pythonPath, args, {
-          cwd: path.join(__dirname, '..', '..'),
+          cwd: projectRoot,
           env: {
             ...process.env,
-            PYTHONPATH: path.join(__dirname, '..', '..', 'version2')
+            PYTHONPATH: path.join(projectRoot, 'version2')
           }
         })
         
@@ -212,8 +241,9 @@ class ProcessingBridge {
       // Map web config to CLI arguments
       const cliArgs = this.mapWebConfigToCLIArgs(webConfig)
       
-      // Get CLI tool path
-      const cliToolPath = path.join(__dirname, '..', '..', 'version2', 'integration', 'unified_cli.py')
+      // Get project root and CLI tool path
+      const projectRoot = process.cwd()
+      const cliToolPath = path.join(projectRoot, 'version2', 'integration', 'unified_cli.py')
       const pythonPath = process.env.PYTHON_PATH || '/opt/homebrew/bin/python3'
       
       console.log(`[ProcessingBridge] Starting processing for job ${jobId}`)
@@ -221,10 +251,10 @@ class ProcessingBridge {
       
       // Execute CLI tool
       const child = spawn(pythonPath, [cliToolPath, ...cliArgs], {
-        cwd: path.join(__dirname, '..', '..'),
+        cwd: projectRoot,
         env: {
           ...process.env,
-          PYTHONPATH: path.join(__dirname, '..', '..', 'version2')
+          PYTHONPATH: path.join(projectRoot, 'version2')
         }
       })
       

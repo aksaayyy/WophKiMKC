@@ -1,0 +1,48 @@
+# Render.com Blueprint for HookClip
+# This file allows one-click deployment to Render.com
+
+services:
+  # Redis Database
+  - type: redis
+    name: hookclip-redis
+    plan: free
+    ipAllowList: []
+
+  # Backend API
+  - type: web
+    name: hookclip-api
+    runtime: node
+    plan: standard
+    buildCommand: cd server && npm install
+    startCommand: cd server && npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: REDIS_HOST
+        fromService:
+          name: hookclip-redis
+          type: redis
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          name: hookclip-redis
+          type: redis
+          property: port
+      - key: FRONTEND_URL
+        value: https://hookclip-web.onrender.com
+      - key: ADMIN_PASSWORD
+        generateValue: true
+
+  # Frontend Web App
+  - type: web
+    name: hookclip-web
+    runtime: static
+    plan: free
+    buildCommand: cd web && npm install && npm run build
+    staticPublishPath: web/dist
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        value: https://hookclip-api.onrender.com/api

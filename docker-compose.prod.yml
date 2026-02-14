@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: hookclip-redis
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.prod
+    container_name: hookclip-server
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    env_file:
+      - ./server/.env
+    volumes:
+      - ./server/downloads:/app/downloads
+      - ./server/output:/app/output
+      - ./server/logs:/app/logs
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - NODE_ENV=production
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile.prod
+    container_name: hookclip-web
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:3001/api
+      - API_SERVER_URL=http://server:3001/api
+    depends_on:
+      - server
+
+  # Optional: Nginx reverse proxy with SSL
+  # Uncomment for production with custom domain
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: hookclip-nginx
+  #   restart: unless-stopped
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+  #     - ./nginx/ssl:/etc/nginx/ssl:ro
+  #     - ./server/output:/var/www/clips:ro
+  #   depends_on:
+  #     - web
+  #     - server
+
+volumes:
+  redis_data:

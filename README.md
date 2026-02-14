@@ -1,66 +1,117 @@
-# Video Clipper Pro
+# HookClip
 
-AI-powered video processing platform for creating engaging short-form content.
+Generate engaging hook clips from YouTube videos. Paste a YouTube URL, configure clip options, and get vertical clips optimized for Shorts/Reels/TikTok.
 
 ## Features
 
-- 🎬 AI-powered video clipping
-- 🎤 Automatic caption generation
-- 🎨 Video enhancement and optimization
-- 📱 Multi-platform formatting (TikTok, Instagram, YouTube Shorts)
-- 🎵 Background music with auto-ducking
-- 👥 Team collaboration
-- 💳 Subscription management
+- Smart hook detection using audio energy analysis
+- 1080x1920 vertical clips (9:16) with H.264 encoding
+- Optional auto-upload to YouTube Shorts (multi-account round-robin)
+- Clean web UI with real-time processing status
 
-## Tech Stack
-
-- **Framework:** Next.js 14
-- **Language:** TypeScript
-- **Styling:** Tailwind CSS
-- **Database:** Supabase (PostgreSQL)
-- **Authentication:** Supabase Auth
-- **Payments:** Stripe
-- **3D Graphics:** Three.js, React Three Fiber
-
-## Getting Started
+## Quick Start
 
 ### Prerequisites
 
-- Node.js 18+ 
-- npm or yarn
-- Supabase account
+- Node.js 20+
+- Redis
+- FFmpeg
+- yt-dlp
 
-### Installation
+### One-Command Start
 
 ```bash
-# Install dependencies
+./start.sh start    # Start all services
+./start.sh stop     # Stop all services
+./start.sh status   # Check service status
+./start.sh logs     # View logs
+./start.sh dev      # Dev mode with visible logs
+```
+
+Open http://localhost:4000
+
+### Manual Setup
+
+```bash
+# Backend
+cd server
+cp .env.example .env
 npm install
+npm run dev
 
-# Set up environment variables
-cp .env.example .env.local
-
-# Run development server
+# Frontend (new terminal)
+cd web
+npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to see the application.
+### YouTube Upload (Optional)
 
-## Environment Variables
+```bash
+cd server
+npm run setup:oauth
+```
 
-Create a `.env.local` file with:
+Follow the prompts to get a YouTube refresh token, then add it to `server/.env`.
 
-```env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-STRIPE_SECRET_KEY=your_stripe_secret_key
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
+## Architecture
+
+```
+server/          Node.js + Express + BullMQ
+  services/      yt-dlp downloader, FFmpeg clipper, hook detector, YouTube uploader
+  workers/       BullMQ job queue (download → analyze → clip → upload)
+  routes/        REST API endpoints
+
+web/             Next.js 14 + TypeScript + Tailwind
+  Single page    URL input → options → processing status → download/upload
+```
+
+## Docker
+
+```bash
+docker-compose up
 ```
 
 ## Deployment
 
-This project is deployed on Vercel. Push to the main branch to trigger automatic deployment.
+Deploy HookClip for users to access:
 
-## License
+### Option 1: Docker Compose (Self-Hosted) ⭐
 
-Private - All rights reserved
+```bash
+# Setup
+./deploy.sh docker
+
+# Or manually:
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+Access at `http://your-server-ip:3000`
+
+### Option 2: Render.com (One-Click)
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/yourusername/hookclip)
+
+### Option 3: Railway / Fly.io
+
+See [DEPLOY.md](DEPLOY.md) for detailed instructions.
+
+---
+
+## Mobile App
+
+### Mobile Web (No Install)
+
+```bash
+./start.sh mobile-web
+# Open on phone: http://your-server:4001/mobile.html
+```
+
+### Native Apps
+
+```bash
+./start.sh ios      # iOS Simulator
+./start.sh android  # Android USB device
+```
+
+See [DEPLOY.md](DEPLOY.md) for production deployment.

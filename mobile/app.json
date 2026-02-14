@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "HookClip",
+    "slug": "hookclip-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.hookclip.app",
+      "buildNumber": "1.0.0"
+    },
+    "android": {
+      "package": "com.hookclip.app",
+      "permissions": [
+        "INTERNET"
+      ]
+    }
+  }
+}

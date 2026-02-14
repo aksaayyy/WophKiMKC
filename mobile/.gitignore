@@ -1,0 +1,36 @@
+node_modules/
+.expo/
+dist/
+npm-debug.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
+
+# macOS
+.DS_Store
+
+# iOS
+ios/
+!ios/.gitkeep
+
+# Android
+android/
+!android/.gitkeep
+
+# Environment
+.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Build
+*.ipa
+*.apk
+*.aab

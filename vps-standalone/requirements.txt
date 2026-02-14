@@ -1,7 +1,0 @@
-# Video Clipper VPS - Minimal Requirements
-flask>=2.0.0
-flask-cors>=3.0.0
-werkzeug>=2.0.0
-
-# Optional: For advanced features
-# yt-dlp  # Install separately: pip install yt-dlp
